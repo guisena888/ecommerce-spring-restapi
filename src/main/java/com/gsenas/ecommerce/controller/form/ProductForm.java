@@ -1,9 +1,13 @@
 package com.gsenas.ecommerce.controller.form;
 
+import java.math.BigDecimal;
+
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 
+import com.gsenas.ecommerce.model.Brand;
 import com.gsenas.ecommerce.model.Product;
+import com.gsenas.ecommerce.repository.BrandRepository;
 
 public class ProductForm {
 	
@@ -11,32 +15,54 @@ public class ProductForm {
 	private String name;
 	
 	@NotNull @NotEmpty
-	private String brand;
+	private String description;
 	
 	@NotNull @NotEmpty
-	private String category;
+	private String brandName;
 	
-	public Product convert() {
-		return new Product(name,category, brand);		
+	private BigDecimal price;
+	
+	public Product convert(BrandRepository brandRepository) {
+		Brand brand = brandRepository.findByName(brandName);
+		Product product = new Product(name,description,brand,price);
+		return product;
+				
 	}
-	
+
 	public String getName() {
 		return name;
 	}
+
 	public void setName(String name) {
 		this.name = name;
 	}
-	public String getBrand() {
-		return brand;
-	}
-	public void setBrand(String brand) {
-		this.brand = brand;
-	}
-	public String getCategory() {
-		return category;
-	}
-	public void setCategory(String category) {
-		this.category = category;
+
+	public String getBrandName() {
+		return brandName;
 	}
 
+	public void setBrandName(String brandName) {
+		this.brandName = brandName;
+	}
+
+	public String getDescription() {
+		return description;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
+	}
+
+	public BigDecimal getPrice() {
+		return price;
+	}
+
+	public void setPrice(BigDecimal price) {
+		this.price = price;
+	}
+
+
+
+	
+	
 }

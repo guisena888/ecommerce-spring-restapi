@@ -8,7 +8,7 @@ import com.gsenas.ecommerce.model.Product;
 
 public interface ProductsRepository extends JpaRepository<Product,Long>{
 
-	List<Product> findByProductName(String name);
+	List<Product> findByName(String name);
 
 	
 

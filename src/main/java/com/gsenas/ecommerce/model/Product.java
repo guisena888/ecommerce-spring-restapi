@@ -1,60 +1,77 @@
 package com.gsenas.ecommerce.model;
 
+import java.math.BigDecimal;
+
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.ManyToOne;
 
 @Entity
 public class Product {
 	
 	@Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Integer id;
-	private String productName;
+	private Long id;
 	
-	private String categoryName;
+	private String name;
+	private String description;
 	
-	private String brandName;
+	@ManyToOne
+	private Brand brand;
+	
+	private BigDecimal price;
 
 	public Product() {
 	}
 
-	public Product(String productName, String categoryName, String brandName) {
-		this.productName = productName;
-		this.categoryName = categoryName;
-		this.brandName = brandName;
+	public Product(String name, String description, Brand brand, BigDecimal price) {
+		this.name = name;
+		this.description = description;
+		this.brand = brand;
+		this.price = price;
 	}
 
-	public Integer getId() {
+	public Long getId() {
 		return id;
 	}
 
-	public void setId(Integer id) {
+	public void setId(Long id) {
 		this.id = id;
 	}
 
-	public String getProductName() {
-		return productName;
+	public String getName() {
+		return name;
 	}
 
-	public void setProductName(String productName) {
-		this.productName = productName;
+	public void setName(String name) {
+		this.name = name;
 	}
 
-	public String getCategoryName() {
-		return categoryName;
+	public String getDescription() {
+		return description;
 	}
 
-	public void setCategoryName(String categoryName) {
-		this.categoryName = categoryName;
+	public void setDescription(String description) {
+		this.description = description;
 	}
 
-	public String getBrandName() {
-		return brandName;
+	public Brand getBrand() {
+		return brand;
 	}
 
-	public void setBrandName(String brandName) {
-		this.brandName = brandName;
+	public void setBrand(Brand brand) {
+		this.brand = brand;
 	}
 
+	public BigDecimal getPrice() {
+		return price;
+	}
+
+	public void setPrice(BigDecimal price) {
+		this.price = price;
+	}
+
+	
 }
+	
