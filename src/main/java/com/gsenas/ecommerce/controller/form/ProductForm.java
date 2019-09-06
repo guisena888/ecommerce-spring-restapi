@@ -61,6 +61,16 @@ public class ProductForm {
 		this.price = price;
 	}
 
+	public Product update(Product product, BrandRepository brandRepository) {
+		Brand brand = brandRepository.findByName(brandName);
+		product.setName(name);
+		product.setDescription(description);
+		product.setBrand(brand);
+		product.setPrice(price);
+		
+		return product;
+	}
+
 
 
 	

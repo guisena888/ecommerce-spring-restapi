@@ -1,17 +1,23 @@
 package com.gsenas.ecommerce.controller;
 
 import java.net.URI;
-import java.util.ArrayList;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.Sort.Direction;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.util.UriComponentsBuilder;
 
@@ -20,7 +26,6 @@ import com.gsenas.ecommerce.model.Product;
 import com.gsenas.ecommerce.repository.BrandRepository;
 import com.gsenas.ecommerce.repository.ProductsRepository;
 
-import java.util.List;
 import java.util.Optional;
 
 import javax.validation.Valid;
@@ -36,15 +41,30 @@ public class ProductsController {
 	private BrandRepository brandRepository;
 	
 	@GetMapping
-	public List<Product> find(String productName) {
-		List<Product> products = new ArrayList<>();
+	public Page<Product> findAll(@RequestParam(required=false) String productName,
+								 @RequestParam int page,
+								 @RequestParam int size,
+								 @RequestParam String sort) {
+		Pageable pagination = PageRequest.of(page, size, Direction.ASC, sort);
+		
 		if(productName == null) {
-			products = productsRepository.findAll();
+			Page<Product> products = productsRepository.findAll(pagination);
+			return products;
 		}
 		else {
-			products = productsRepository.findByName(productName);
+			Page<Product> products = productsRepository.findByName(productName, pagination);
+			return products;
 		}
-		return products;
+	}
+	
+	@GetMapping("/{id}")
+	public ResponseEntity<Product> findById(@PathVariable Long id){
+		Optional<Product> optional = productsRepository.findById(id);
+		if(optional.isPresent()) {
+			return ResponseEntity.ok(optional.get());
+		}
+		
+		return ResponseEntity.notFound().build();
 	}
 	
 	@PostMapping
@@ -55,6 +75,17 @@ public class ProductsController {
 		
 		URI uri = uriBuilder.path("/products/{id}").buildAndExpand(product.getId()).toUri();
 		return ResponseEntity.created(uri).body(product);
+	}
+	
+	@PutMapping("/{id}")
+	@Transactional
+	public ResponseEntity<Product> update(@PathVariable Long id, @RequestBody @Valid ProductForm productForm){
+		Optional<Product> optional = productsRepository.findById(id);
+		if(optional.isPresent()) {
+			Product product = productForm.update(optional.get(), brandRepository);			
+			return ResponseEntity.ok(product);
+		}
+		return ResponseEntity.notFound().build();
 	}
 	
 	@DeleteMapping("/{id}")
